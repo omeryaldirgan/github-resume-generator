@@ -6,6 +6,7 @@ import { Search, ArrowRight, Users, GitFork } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import resumeImage from '@/assets/illustration-dashboard.webp'
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 export default function MainContent() {
   const router = useRouter();
@@ -25,6 +26,10 @@ export default function MainContent() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleExampleClick = (name: string) => {
+    setUsername(name);
   };
 
   return (
@@ -90,8 +95,18 @@ export default function MainContent() {
 
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-surface-500 dark:text-slate-500 text-sm">
-                  Popular profiles: <code className="text-primary-600 dark:text-primary-400/90">torvalds</code>, 
-                  <code className="text-primary-600 dark:text-primary-400/90">gaearon</code>
+                  Popular profiles:{' '}
+                  {['torvalds', 'omeryaldirgan', 'MhmtMutlu'].map((name, index) => (
+                    <React.Fragment key={name}>
+                      <button
+                        onClick={() => handleExampleClick(name)}
+                        className="inline-block text-primary-600 dark:text-primary-400/90 hover:underline focus:outline-none"
+                      >
+                        {name}
+                      </button>
+                      {index < 2 && <span className="mr-1">,</span>}
+                    </React.Fragment>
+                  ))}
                 </p>
                 <button 
                   onClick={handleGenerateResume}
@@ -116,7 +131,7 @@ export default function MainContent() {
                       </>
                     ) : (
                       <>
-                        <span>Generate Resume</span>
+                        <span>Generate</span>
                         <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
                       </>
                     )}

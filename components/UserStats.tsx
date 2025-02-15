@@ -7,7 +7,7 @@ interface UserStatsProps {
   data: GitHubStats;
 }
 
-const PINNED_STATS = ['Repositories', 'Followers'] as const;
+const PINNED_STATS = ['Repositories', 'Followers',"Following","Stars"] as const;
 
 export default function UserStats({ data }: UserStatsProps) {
   const { filters } = useResume();

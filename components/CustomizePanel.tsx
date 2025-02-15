@@ -133,24 +133,6 @@ export default function CustomizePanel() {
               />
               <span className="resume-text text-surface-700 dark:text-dark-secondary">Show GitHub Stats</span>
             </label>
-
-            <div>
-              <label className="block text-surface-700 dark:text-dark-secondary mb-2">Count:</label>
-              <input
-                type="number"
-                value={filters.statsView.count}
-                onChange={(e) => setFilters({
-                  ...filters,
-                  statsView: {
-                    ...filters.statsView,
-                    count: parseInt(e.target.value)
-                  }
-                })}
-                min="1"
-                max="10"
-                className="w-20 px-3 py-2 border border-surface-300 dark:border-dark rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-dark-card dark:text-dark bg-white dark:bg-dark-card"
-              />
-            </div>
           </div>
         </div>
 

@@ -55,11 +55,11 @@ const defaultFilters: ResumeFilters = {
   accentColor: '#0366d6',
   statsView: {
     count: 6,
-    showPinned: false,
+    showPinned: true,
     viewType: 'default'
   },
   reposView: {
-    count: 6,
+    count: 4,
     showPinned: false,
     showStarred: false
   }

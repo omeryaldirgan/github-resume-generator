@@ -41,31 +41,52 @@ export default function ResumePage() {
     
     try {
       const html2pdf = (await import('html2pdf.js')).default;
-      const worker = html2pdf();
-      const options = {
-        margin: 10,
+      
+      // Yazdırma modunu aktif et
+      document.body.classList.add('print-mode');
+      
+      // Tüm elementleri yazdırma moduna hazırla
+      const elements = resumeRef.current.getElementsByClassName('page-break-inside-avoid');
+      Array.from(elements).forEach(el => {
+        (el as HTMLElement).style.marginBottom = '15mm';
+      });
+
+      const opt = {
+        margin: 15,
         filename: `github-resume-${username}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { 
           scale: 2,
           useCORS: true,
-          logging: false
+          letterRendering: true,
+          logging: false,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
         },
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'portrait' 
-        }
+          orientation: 'portrait',
+          compress: true,
+        },
+        pagebreak: { mode: 'avoid-all' }
       };
 
-      await worker
-        .set(options)
-        .from(resumeRef.current)
-        .save();
+      // PDF oluştur
+      await html2pdf().from(resumeRef.current).set(opt).save();
       
     } catch (error) {
       console.error('PDF export failed:', error);
     } finally {
+      // Yazdırma modunu kapat
+      document.body.classList.remove('print-mode');
+      
+      // Margin düzeltmelerini geri al
+      const elements = resumeRef.current?.getElementsByClassName('page-break-inside-avoid');
+      Array.from(elements || []).forEach(el => {
+        (el as HTMLElement).style.marginBottom = '';
+      });
+      
       setIsExporting(false);
     }
   };

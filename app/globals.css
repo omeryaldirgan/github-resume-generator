@@ -133,12 +133,16 @@
 
 /* Dark mode için button stilleri */
 .dark .btn-primary {
-  @apply bg-primary-700 hover:bg-primary-800;
+  background-color: #0369a1;
+}
+.dark .btn-primary:hover {
+  background-color: #075985;
 }
 
 /* Dark mode için card stilleri */
 .dark .card {
-  @apply bg-dark-card border-dark;
+  background-color: #1F2937;
+  border-color: #374151;
 }
 
 /* Custom scrollbar */
@@ -147,73 +151,106 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-surface-100;
+  background-color: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-surface-300 rounded-full;
+  background-color: #cbd5e1;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-surface-400;
+  background-color: #94a3b8;
 }
 
 #__next {
-  @apply h-screen overflow-hidden;
+  height: 100vh;
+  overflow: hidden;
 }
 
+/* Print stilleri */
 @media print {
+  /* Print stilleri */
   @page {
     size: A4;
     margin: 0;
   }
 
   body {
-    background: white !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  .shadow-card {
-    box-shadow: none !important;
-    border: none !important;
+    margin: 0;
+    padding: 0;
+    width: 100%;
   }
 
   .cv-container {
-    max-width: none !important;
-    width: 100% !important;
-    padding: 10mm !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    padding: 15mm 20mm !important;
     margin: 0 !important;
-    min-height: auto !important;
+    background: white !important;
+    box-shadow: none !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  /* Boşlukları azalt */
-  .space-y-8 > * + * {
-    margin-top: 12px !important;
+  /* Kartlar ve bölümler */
+  .cv-container section,
+  .cv-container .bg-white,
+  .cv-container .dark\:bg-dark-card {
+    background: white !important;
+    padding: 4mm !important;
+    margin-bottom: 5mm !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: 1px solid #eee !important;
   }
 
-  .mb-8 {
-    margin-bottom: 12px !important;
+  /* Grid düzeni */
+  .cv-container .grid {
+    display: grid !important;
+    grid-gap: 5mm !important;
   }
 
-  .gap-4 {
-    gap: 8px !important;
+  .cv-container .md\:grid-cols-2 {
+    grid-template-columns: 1fr 1fr !important;
   }
 
-  .p-6 {
-    padding: 12px !important;
+  /* Başlıklar ve metinler */
+  .cv-container h1 { font-size: 18pt !important; }
+  .cv-container h2 { font-size: 16pt !important; }
+  .cv-container h3 { font-size: 14pt !important; }
+  .cv-container p { font-size: 11pt !important; }
+
+  /* Teknoloji etiketleri */
+  .cv-container .inline-flex {
+    display: inline-flex !important;
+    padding: 1mm 2mm !important;
+    margin: 1mm !important;
+    border: 1px solid #eee !important;
+    background: #f8f9fa !important;
   }
 
-  /* Sayfa geçişlerini düzelt */
+  /* Görünürlük kontrolleri */
+  .no-print,
+  .customize-panel {
+    display: none !important;
+  }
+
+  /* Sayfa sonu kontrolü */
   .page-break-inside-avoid {
     page-break-inside: avoid !important;
     break-inside: avoid !important;
+    margin-bottom: 5mm !important;
+  }
+}
+
+@media screen and (min-width: 0\0) {
+  /* Print mode stilleri */
+  .print-mode {
+    /* ... aynı print stilleri ... */
   }
 }
 

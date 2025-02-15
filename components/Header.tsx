@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { fetchGitHubData } from '@/lib/github-api';
+import { useResume } from '@/context/ResumeContext';
 
 interface Repository {
   name: string;
@@ -17,7 +18,8 @@ export default function Header() {
   const [repoStats, setRepoStats] = useState({ stars: 0 });
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const isResumePage = pathname?.includes('/resume/') || false;
+  const isResumePage = pathname?.startsWith('/resume/') ?? false;
+  const { handleExportPDF, isExporting } = useResume();
 
   useEffect(() => {
     const fetchRepoStats = async () => {
@@ -67,9 +69,8 @@ export default function Header() {
           <div className="flex items-center space-x-4">
             {isResumePage && (
               <button 
-                onClick={() => {
-                  // PDF export fonksiyonunu buraya taşıyacağız
-                }}
+                onClick={handleExportPDF}
+                disabled={isExporting}
                 className={cn(
                   "relative px-6 py-2 text-base font-medium rounded-xl transition-all duration-300 group",
                   "bg-gradient-to-r from-primary-600 to-purple-600",
@@ -78,12 +79,13 @@ export default function Header() {
                   "dark:hover:from-primary-400 dark:hover:to-purple-400",
                   "text-white shadow-lg hover:shadow-xl",
                   "hover:shadow-primary-500/25 dark:hover:shadow-primary-950/50",
-                  "focus:ring-4 focus:ring-primary-500/30 outline-none"
+                  "focus:ring-4 focus:ring-primary-500/30 outline-none",
+                  isExporting && "opacity-75 cursor-not-allowed"
                 )}
               >
                 <span className="flex items-center space-x-2">
                   <Download size={18} />
-                  <span>Export PDF</span>
+                  <span>{isExporting ? 'Exporting...' : 'Export PDF'}</span>
                 </span>
               </button>
             )}

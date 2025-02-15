@@ -7,10 +7,7 @@ export default function CustomizePanel() {
 
   return (
     <div className="w-80 bg-white dark:bg-dark-card rounded-xl p-6 shadow-card h-fit sticky top-24">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="resume-section-title text-surface-900 dark:text-dark">Customize it!</h2>
-        <Settings className="text-surface-400 dark:text-dark-secondary" size={20} />
-      </div>
+      
       
       <div className="space-y-8">
         {/* Introduction Settings */}

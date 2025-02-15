@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useRef } from 'react';
 
 type ResumeTheme = 'modern' | 'classic' | 'minimal' | 'creative';
 
@@ -36,6 +36,8 @@ type ResumeContextType = {
   setFilters: (filters: ResumeFilters) => void;
   userData: any;
   setUserData: (data: any) => void;
+  handleExportPDF: () => Promise<void>;
+  isExporting: boolean;
 };
 
 const defaultFilters: ResumeFilters = {
@@ -65,15 +67,80 @@ const defaultFilters: ResumeFilters = {
   }
 };
 
-const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
+export const ResumeContext = createContext<ResumeContextType>({
+  filters: defaultFilters,
+  setFilters: () => {},
+  userData: null,
+  setUserData: () => {},
+  handleExportPDF: () => Promise.resolve(),
+  isExporting: false
+});
 
 export function ResumeProvider({ children }: { children: React.ReactNode }) {
-  const [filters, setFilters] = useState<ResumeFilters>(defaultFilters);
+  const [filters, setFilters] = useState(defaultFilters);
   const [userData, setUserData] = useState<any>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const resumeRef = useRef<HTMLDivElement>(null);
+
+  const handleExportPDF = async () => {
+    if (!resumeRef.current || isExporting) return;
+    setIsExporting(true);
+    
+    try {
+      const html2pdf = (await import('html2pdf.js')).default;
+      
+      const cvContent = resumeRef.current.querySelector('.cv-container') as HTMLElement;
+      if (!cvContent) return;
+      
+      document.body.classList.add('print-mode');
+      
+      const opt = {
+        margin: 0,
+        filename: `${userData?.name || userData?.login}-resume.pdf`,
+        image: { 
+          type: 'jpeg', 
+          quality: 1.0
+        },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          logging: false,
+          windowWidth: 794, // A4 genişliği
+        },
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait',
+          compress: true,
+        },
+        pagebreak: { mode: 'avoid-all' }
+      };
+
+      await html2pdf().from(cvContent).set(opt).save();
+      
+    } catch (error) {
+      console.error('PDF export failed:', error);
+    } finally {
+      document.body.classList.remove('print-mode');
+      setIsExporting(false);
+    }
+  };
 
   return (
-    <ResumeContext.Provider value={{ filters, setFilters, userData, setUserData }}>
-      {children}
+    <ResumeContext.Provider value={{ 
+      filters, 
+      setFilters, 
+      userData, 
+      setUserData,
+      handleExportPDF,
+      isExporting
+    }}>
+      <div ref={resumeRef}>
+        {children}
+      </div>
     </ResumeContext.Provider>
   );
 }

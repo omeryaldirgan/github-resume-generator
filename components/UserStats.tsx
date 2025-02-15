@@ -19,17 +19,17 @@ export default function UserStats({ data }: UserStatsProps) {
     : allStats;
 
   return (
-    <section className="bg-white dark:bg-dark-card rounded-xl p-6 shadow-card transition-all duration-300">
-      <header className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-surface-900 dark:text-dark">
-          GitHub Stats
-        </h3>
+    <section className="card">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center 
+                         justify-between gap-4 mb-6">
+        <h3 className="text-xl font-semibold">GitHub Stats</h3>
       </header>
       
-      <div className={filters.statsView.viewType === 'pills' 
-        ? "flex flex-wrap gap-3" 
-        : "grid grid-cols-2 gap-4"
-      }>
+      <div className={`
+        ${filters.statsView.viewType === 'pills' 
+          ? "flex flex-wrap gap-2 sm:gap-3" 
+          : "grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"}
+      `}>
         {stats.map((stat, index) => (
           <StatCard
             key={`stat-${index}-${stat.label}`}

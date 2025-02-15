@@ -112,17 +112,19 @@ export default function ResumePage() {
           <div className="order-1 md:order-2 md:flex-1">
             <div 
               ref={resumeRef}
-              className="cv-container mx-auto bg-white dark:bg-dark-card shadow-card"
+              className="cv-container"
               style={{ maxWidth: '210mm' }}
             >
-              <div className="p-[20mm] min-h-[297mm]">
+              <div className="p-4 sm:p-6 md:p-8 lg:p-[12mm] min-h-screen md:min-h-[297mm]">
                 {/* Profile Section */}
-                <div className="flex items-start space-x-6 mb-8 pb-6 border-b border-surface-200 dark:border-dark">
+                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 pb-6 
+                                border-b border-surface-200 dark:border-dark">
                   {filters.showAvatar && (
                     <img
                       src={userData.avatar_url}
                       alt={userData.name || userData.login}
-                      className="w-24 h-24 rounded-full ring-2 ring-surface-200 dark:ring-dark"
+                      className="w-16 h-16 sm:w-24 sm:h-24 rounded-full 
+                               ring-2 ring-surface-200 dark:ring-dark"
                     />
                   )}
                   <div className="flex-1">

@@ -14,28 +14,37 @@
     --font-2xl: 1.5rem;      /* 24px */
     --font-3xl: 1.875rem;    /* 30px */
     --font-4xl: 2.25rem;     /* 36px */
+    --font-mobile-base: 14px;
+    --font-desktop-base: 16px;
   }
 
   body {
     @apply bg-surface-50 text-surface-900 antialiased;
-    font-size: var(--font-base);
+    font-size: var(--font-mobile-base);
     line-height: 1.5;
+  }
+
+  html {
+    font-size: var(--font-mobile-base);
+    @screen sm {
+      font-size: var(--font-desktop-base);
+    }
   }
 
   /* Başlık stilleri */
   h1 {
-    @apply text-3xl font-bold tracking-tight;
-    font-size: var(--font-3xl);
+    @apply text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight;
+    line-height: 1.2;
   }
 
   h2 {
-    @apply text-2xl font-semibold;
-    font-size: var(--font-2xl);
+    @apply text-xl sm:text-2xl lg:text-3xl font-semibold;
+    line-height: 1.3;
   }
 
   h3 {
-    @apply text-xl font-medium;
-    font-size: var(--font-xl);
+    @apply text-lg sm:text-xl font-medium;
+    line-height: 1.4;
   }
 
   /* Metin boyutları */
@@ -50,7 +59,7 @@
   }
 
   .text-body {
-    font-size: var(--font-base);
+    @apply text-sm sm:text-base;
     line-height: 1.6;
   }
 
@@ -82,8 +91,9 @@
 
   /* Buton ve form elemanları */
   .btn {
-    font-size: var(--font-sm);
-    @apply font-medium;
+    @apply px-4 py-2 sm:px-6 sm:py-3 rounded-lg font-medium 
+           transition-all duration-200 ease-in-out
+           focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
 
   .input-label {
@@ -99,10 +109,8 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 text-white px-6 py-3 rounded-lg font-medium
-           hover:bg-primary-700 transition-colors duration-200
-           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-           disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-primary-600 text-white hover:bg-primary-700
+           dark:bg-primary-500 dark:hover:bg-primary-600;
   }
 
   .input-primary {
@@ -112,7 +120,7 @@
   }
 
   .card {
-    @apply bg-white rounded-xl shadow-card hover:shadow-hover transition-shadow duration-200;
+    @apply p-4 sm:p-6 rounded-xl bg-white dark:bg-dark-card shadow-card;
   }
 }
 
@@ -123,6 +131,46 @@
   
   .dark-hover {
     @apply hover:bg-surface-100 dark:hover:bg-surface-800;
+  }
+
+  .container {
+    @apply px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+
+  /* Ana layout yapısı */
+  .layout-container {
+    @apply min-h-screen w-full;
+  }
+
+  /* Responsive spacing */
+  .section-spacing {
+    @apply space-y-4 sm:space-y-6 lg:space-y-8;
+  }
+
+  .content-spacing {
+    @apply space-y-3 sm:space-y-4;
+  }
+
+  .cv-container {
+    @apply mx-auto shadow-card;
+    background-color: white;
+    padding: 1rem;
+    
+    @screen sm {
+      padding: 1.5rem;
+    }
+    
+    @screen md {
+      padding: 2rem;
+    }
+    
+    @screen lg {
+      padding: 2.5rem;
+    }
+  }
+
+  .dark .cv-container {
+    background-color: var(--dark-card-bg);
   }
 }
 
@@ -170,7 +218,6 @@
 
 /* Print stilleri */
 @media print {
-  /* Print stilleri */
   @page {
     size: A4;
     margin: 0;
@@ -185,9 +232,9 @@
   .cv-container {
     width: 210mm !important;
     min-height: 297mm !important;
-    padding: 15mm 20mm !important;
+    padding: 15mm !important;
     margin: 0 !important;
-    background: white !important;
+    background-color: white !important;
     box-shadow: none !important;
     font-size: 11pt !important;
     line-height: 1.4 !important;
@@ -251,6 +298,60 @@
   /* Print mode stilleri */
   .print-mode {
     /* ... aynı print stilleri ... */
+  }
+}
+
+/* Mobil navigasyon ve menü */
+.mobile-nav {
+  @apply fixed inset-0 z-50 bg-white dark:bg-dark-card;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobile-nav.open {
+  transform: translateX(0);
+}
+
+/* Responsive grid sistemleri */
+.responsive-grid {
+  @apply grid gap-4 sm:gap-6;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+/* Form elemanları */
+.input {
+  @apply w-full px-3 py-2 sm:px-4 sm:py-3 rounded-lg
+         border border-surface-200 dark:border-dark
+         focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+}
+
+/* Responsive padding ve margin */
+@screen sm {
+  .cv-container {
+    padding: 1.5rem !important;
+  }
+  
+  .card {
+    padding: 1.25rem !important;
+  }
+}
+
+@screen md {
+  .cv-container {
+    padding: 2rem !important;
+  }
+  
+  .card {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Print modu için özel padding */
+@media print {
+  .cv-container {
+    padding: 15mm !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
   }
 }
 

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
-import { Sun, Moon, Github, ArrowLeft, Download } from 'lucide-react';
+import { Sun, Moon, Github,Download } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
@@ -42,25 +42,16 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="h-16 border-b border-surface-200/50 dark:border-slate-800/50 
-      bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50
-      dark:shadow-[0_2px_10px_-2px_rgba(0,0,0,0.3)]"
-    >
-      <div className="container mx-auto h-full px-4">
-        <div className="flex items-center justify-between h-full">
-          <div className="flex items-center space-x-4">
-            {isResumePage ? (
-              <Link 
-                href="/" 
-                className="text-surface-600 dark:text-dark-secondary hover:text-surface-900 dark:hover:text-dark"
-              >
-                <ArrowLeft size={20} />
-              </Link>
-            ) : null}
-            
-            <Link href="/" className="flex items-center space-x-3">
-              <Github className="w-8 h-8 text-primary-600" />
-              <span className="text-xl font-semibold text-surface-900 dark:text-dark">
+    <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-slate-950/80 backdrop-blur-sm">
+      <div className="container mx-auto px-4">
+        <div className="flex h-16 items-center justify-between">
+          <div className="flex items-center">
+            <Link href="/" className="flex items-center space-x-2">
+              <Github className="h-8 w-8 text-primary-600 dark:text-primary-400" />
+              <span className="hidden sm:inline-block font-bold text-xl 
+                bg-gradient-to-r from-primary-600 to-primary-500 
+                dark:from-primary-400 dark:to-primary-500 
+                bg-clip-text text-transparent">
                 GitHub Resume
               </span>
             </Link>

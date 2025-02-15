@@ -19,41 +19,47 @@ export default function TopRepositories({ data }: { data: any }) {
   }
 
   return (
-    <div className="bg-white dark:bg-dark-card rounded-xl p-6 shadow-card">
-      <h3 className="text-xl font-semibold mb-4 text-surface-900 dark:text-dark">Top Repositories</h3>
+    <div className="card section-spacing">
+      <h3 className="text-xl font-semibold mb-4">Top Repositories</h3>
       
-      <div className="grid md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {repositories.map((repo: any) => (
-          <div key={repo.id} className="border border-surface-200 dark:border-dark rounded-lg p-4 hover:bg-surface-50 dark:hover:bg-surface-800 transition-colors">
-            <div className="flex items-start justify-between">
+          <div key={repo.id} className="card hover:shadow-lg transition-shadow">
+            <div className="flex flex-col sm:flex-row justify-between gap-2">
               <a 
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-600 dark:text-primary-500 font-medium hover:text-primary-700 dark:hover:text-primary-400 flex items-center"
+                className="text-primary-600 dark:text-primary-400 font-medium 
+                         hover:underline flex items-center gap-1 text-sm sm:text-base"
               >
                 {repo.name}
-                <ExternalLink size={16} className="ml-1" />
+                <ExternalLink size={14} className="shrink-0" />
               </a>
-              <div className="flex items-center space-x-3 text-surface-600 dark:text-dark-secondary">
-                <div className="flex items-center">
-                  <Star size={16} className="mr-1" />
-                  {repo.stargazers_count}
+              
+              <div className="flex items-center gap-3 text-surface-600 dark:text-dark-secondary text-sm">
+                <div className="flex items-center gap-1">
+                  <Star size={14} className="shrink-0" />
+                  <span>{repo.stargazers_count}</span>
                 </div>
-                <div className="flex items-center">
-                  <GitFork size={16} className="mr-1" />
-                  {repo.forks_count}
+                <div className="flex items-center gap-1">
+                  <GitFork size={14} className="shrink-0" />
+                  <span>{repo.forks_count}</span>
                 </div>
               </div>
             </div>
             
             {repo.description && (
-              <p className="mt-2 text-surface-600 dark:text-dark-secondary text-sm">{repo.description}</p>
+              <p className="mt-2 text-sm text-surface-600 dark:text-dark-secondary line-clamp-2">
+                {repo.description}
+              </p>
             )}
 
             {repo.language && (
-              <div className="mt-3 text-sm">
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400">
+              <div className="mt-3">
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                               bg-primary-50 dark:bg-primary-900/20 
+                               text-primary-700 dark:text-primary-400">
                   {repo.language}
                 </span>
               </div>

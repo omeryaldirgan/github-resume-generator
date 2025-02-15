@@ -1,17 +1,15 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
-import { fetchGitHubData } from '@/lib/github-api';
-import { useResume } from '@/context/ResumeContext';
-import { ArrowLeft, Download, Settings, MapPin, Calendar, Mail, Link as LinkIcon, Building2, Twitter } from 'lucide-react';
-import Link from 'next/link';
-import UserProfile from '@/components/UserProfile';
-import UserStats from '@/components/UserStats';
-import TopRepositories from '@/components/TopRepositories';
 import Contributions from '@/components/Contributions';
 import CustomizePanel from '@/components/CustomizePanel';
 import TechnologyInsights from '@/components/TechnologyInsights';
+import TopRepositories from '@/components/TopRepositories';
+import UserStats from '@/components/UserStats';
+import { useResume } from '@/context/ResumeContext';
+import { fetchGitHubData } from '@/lib/github-api';
+import { Building2, Calendar, Link as LinkIcon, Mail, MapPin, Twitter } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 
 export default function ResumePage() {
   const params = useParams();
@@ -20,19 +18,29 @@ export default function ResumePage() {
   const resumeRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  useEffect(() => {
+  useEffect(() => {    
+    let isMounted = true;
     const fetchData = async () => {
       try {
         const data = await fetchGitHubData(username);
-        setUserData(data);
+        if (isMounted) {
+          setUserData(data);
+        }
       } catch (error) {
-        console.error('Error fetching GitHub data:', error);
+        if (isMounted) {
+          console.error('Error fetching GitHub data:', error);
+        }
       }
-    };
 
-    if (username) {
-      fetchData();
-    }
+      if (username) {
+        fetchData();
+      }
+
+      return () => {
+        isMounted = false;
+        setUserData(null);
+      };
+    };
   }, [username, setUserData]);
 
   const handleExportPDF = async () => {

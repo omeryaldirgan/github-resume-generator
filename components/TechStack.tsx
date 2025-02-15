@@ -18,7 +18,6 @@ interface Repository {
 }
 
 export default function TechStack({ repositories }: { repositories: Repository[] }) {
-  // Repolardaki dilleri ve teknolojileri analiz et
   const techStack = analyzeTechnologies(repositories);
   
   return (
@@ -30,7 +29,6 @@ export default function TechStack({ repositories }: { repositories: Repository[]
   );
 }
 
-// TechBadge bileşeni aynı dosyada tanımlanabilir
 function TechBadge({ technology }: { technology: Technology }) {
   return (
     <div className="flex items-center space-x-2 p-2 rounded-lg bg-surface-50 dark:bg-dark-card">

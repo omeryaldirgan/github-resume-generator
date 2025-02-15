@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { Linkedin } from 'lucide-react';
 
 export default function Footer() {

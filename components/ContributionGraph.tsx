@@ -1,5 +1,3 @@
-import { Line, Bar, Radar } from 'react-chartjs-2';
-
 export default function ContributionGraphs({ data }: { data: any }) {
   return (
     <div className="graphs-container">

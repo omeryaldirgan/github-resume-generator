@@ -1,5 +1,4 @@
 import { useResume } from '@/context/ResumeContext';
-import { Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function CustomizePanel() {

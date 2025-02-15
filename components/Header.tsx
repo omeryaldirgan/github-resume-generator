@@ -27,7 +27,7 @@ export default function Header() {
         const data = await fetchGitHubData('omeryaldirgan');
         if (data.repositories && data.repositories.length > 0) {
           const mainRepo = data.repositories.find((repo: Repository) => 
-            repo.name === 'github-resume'
+            repo.name === 'github-resume-generator'
           );
           if (mainRepo) {
             setRepoStats({ stars: mainRepo.stargazers_count });

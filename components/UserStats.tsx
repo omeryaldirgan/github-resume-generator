@@ -22,7 +22,7 @@ export default function UserStats({ data }: UserStatsProps) {
     <section className="card">
       <header className="flex flex-col sm:flex-row items-start sm:items-center 
                          justify-between gap-4 mb-6">
-        <h3 className="text-xl font-semibold">GitHub Stats</h3>
+        <h3 className="text-xl font-semibold text-surface-900 dark:text-white">GitHub Stats</h3>
       </header>
       
       <div className={`

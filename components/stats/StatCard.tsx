@@ -1,40 +1,32 @@
-import { StatItem } from '@/types/github';
 import { cn } from '@/lib/utils';
 
-type StatColor = 'primary' | 'secondary' | 'success' | 'warning';
+export type StatColor = 'primary' | 'secondary' | 'success' | 'warning';
+
+export interface StatItem {
+  label: string;
+  value: number;
+  icon: React.ReactNode;
+  color: StatColor;
+}
 
 interface StatCardProps {
-  stat: {
-    icon: React.ReactNode;
-    label: string;
-    value: string | number;
-    color: StatColor;
-  };
-  variant: 'default' | 'pill';
+  stat: StatItem;
+  variant?: 'default' | 'pill';
 }
 
 const colorVariants: Record<StatColor, string> = {
-  primary: "text-primary-600 dark:text-primary-400",
-  secondary: "text-purple-600 dark:text-purple-400",
-  success: "text-green-600 dark:text-green-400",
-  warning: "text-yellow-600 dark:text-yellow-400",
+  primary: 'text-primary-600 dark:text-primary-400',
+  secondary: 'text-purple-600 dark:text-purple-400',
+  success: 'text-green-600 dark:text-green-400',
+  warning: 'text-yellow-600 dark:text-yellow-400'
 };
 
-interface StatProps {
-  stat: {
-    icon: React.ReactNode;
-    label: string;
-    value: string | number;
-    color?: StatColor;
-  };
-}
-
-export function StatCard({ stat, variant }: StatCardProps) {
+export function StatCard({ stat, variant = 'default' }: StatCardProps) {
   if (variant === 'pill') {
     return (
       <div className={cn(
         "flex items-center px-4 py-2 rounded-full transition-all duration-200",
-        colorVariants[stat.color || 'primary']
+        colorVariants[stat.color]
       )}>
         <span className="shrink-0">{stat.icon}</span>
         <div className="ml-2 flex items-baseline">
@@ -53,7 +45,7 @@ export function StatCard({ stat, variant }: StatCardProps) {
     <div className="flex items-center space-x-3 p-4 rounded-lg border border-surface-200 dark:border-dark hover:bg-surface-50 dark:hover:bg-dark-card/50 transition-colors duration-200">
       <span className={cn(
         "shrink-0",
-        colorVariants[stat.color || 'primary']
+        colorVariants[stat.color]
       )}>
         {stat.icon}
       </span>

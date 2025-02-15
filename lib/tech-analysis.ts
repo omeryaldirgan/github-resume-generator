@@ -1,13 +1,21 @@
 interface Technology {
   name: string;
-  category: 'language' | 'framework';
-  commits: number;
   percentage: number;
-  experience: 'Beginner' | 'Intermediate' | 'Expert';
+  commits: number;
+  experience: string;
   lastUsed: Date;
+  category: 'language' | 'framework';
 }
 
-export function analyzeTechnologies(repositories: any[]) {
+interface Repository {
+  language: string;
+  created_at: string;
+  pushed_at: string;
+  commits: number;
+  dependencies?: Record<string, string>;
+}
+
+export function analyzeTechnologies(repositories: Repository[]) {
   const technologies: Record<string, Technology> = {};
   
   repositories.forEach(repo => {
@@ -27,19 +35,20 @@ export function analyzeTechnologies(repositories: any[]) {
     }
 
     // Package.json analizi
-    const dependencies = extractDependencies(repo);
-    dependencies.forEach(dep => {
-      if (!technologies[dep]) {
-        technologies[dep] = {
-          name: dep,
-          percentage: 0,
-          commits: 0,
-          experience: 'Intermediate',
-          lastUsed: new Date(repo.pushed_at),
-          category: 'framework'
-        };
-      }
-    });
+    if (repo.dependencies) {
+      Object.keys(repo.dependencies).forEach(dep => {
+        if (!technologies[dep]) {
+          technologies[dep] = {
+            name: dep,
+            percentage: 0,
+            commits: 0,
+            experience: 'Intermediate',
+            lastUsed: new Date(repo.pushed_at),
+            category: 'framework'
+          };
+        }
+      });
+    }
   });
 
   // Yüzdeleri hesapla
@@ -47,14 +56,18 @@ export function analyzeTechnologies(repositories: any[]) {
     .reduce((sum, tech) => sum + tech.commits, 0);
   
   Object.values(technologies).forEach(tech => {
-    tech.percentage = (tech.commits / totalCommits) * 100;
+    tech.percentage = (tech.commits / totalCommits) * 100 || 0;
   });
 
   return {
-    topTechnologies: getTopTechnologies(technologies),
     allTechnologies: Object.values(technologies),
-    languageDistribution: getLanguageDistribution(technologies),
-    frameworkUsage: getFrameworkUsage(technologies)
+    topTechnologies: Object.values(technologies)
+      .sort((a, b) => b.percentage - a.percentage)
+      .slice(0, 5),
+    languageDistribution: Object.values(technologies)
+      .filter(tech => tech.category === 'language'),
+    frameworkUsage: Object.values(technologies)
+      .filter(tech => tech.category === 'framework')
   };
 }
 
@@ -81,10 +94,9 @@ export function getExperiencePercentage(experience: string) {
   }
 }
 
-function calculateExperience(firstUsed: string, language: string): 'Beginner' | 'Intermediate' | 'Expert' {
+function calculateExperience(firstUsed: string, language: string): string {
   const years = (new Date().getTime() - new Date(firstUsed).getTime()) / (1000 * 60 * 60 * 24 * 365);
   
-  if (years > 5) return 'Expert';
   if (years > 3) return 'Expert';
   if (years > 1) return 'Intermediate';
   return 'Beginner';

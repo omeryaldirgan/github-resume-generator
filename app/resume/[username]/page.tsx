@@ -14,23 +14,24 @@ import CustomizePanel from '@/components/CustomizePanel';
 import TechnologyInsights from '@/components/TechnologyInsights';
 
 export default function ResumePage() {
-  const { username } = useParams<{ username: string }>();
+  const params = useParams();
+  const username = params?.username as string;
   const { filters, setFilters, userData, setUserData } = useResume();
   const resumeRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
+    const fetchData = async () => {
       try {
         const data = await fetchGitHubData(username);
         setUserData(data);
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching GitHub data:', error);
       }
     };
 
     if (username) {
-      loadData();
+      fetchData();
     }
   }, [username, setUserData]);
 

@@ -4,13 +4,25 @@ import { Pie, Bar, Doughnut } from 'react-chartjs-2';
 import { Code, Framer, Star, GitBranch, Brain, Zap, Trophy } from 'lucide-react';
 import { getLanguageChartData, getFrameworkChartData, languageChartOptions, frameworkChartOptions } from '@/lib/chart-utils';
 import { TechAnalysisService } from '@/lib/services/tech-analysis.service';
-import { TechAnalysis, Technology } from '@/types/github';
+import type { Repository, TechAnalysis } from '@/types/github';
 import { Sparkline } from './charts/Sparkline';
 
-export default function TechnologyInsights({ repositories }: { repositories: any[] }) {
+const techAnalysisService = new TechAnalysisService();
+
+interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string[];
+    borderColor?: string[];
+    borderWidth?: number;
+  }[];
+}
+
+export default function TechnologyInsights({ repositories }: { repositories: Repository[] }) {
   const analysis = useMemo(() => {
-    const service = new TechAnalysisService();
-    return service.analyzeRepositories(repositories);
+    return techAnalysisService.analyzeRepositories(repositories);
   }, [repositories]);
 
   return (
@@ -38,7 +50,7 @@ export default function TechnologyInsights({ repositories }: { repositories: any
             </h4>
             <div className="h-52 md:h-64">
               <Doughnut 
-                data={getLanguageChartData(analysis.primaryLanguages)} 
+                data={getLanguageChartData(analysis.languageDistribution)} 
                 options={languageChartOptions} 
               />
             </div>
@@ -118,4 +130,18 @@ export default function TechnologyInsights({ repositories }: { repositories: any
       </div>
     </div>
   );
-} 
+}
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      position: 'bottom' as const,
+      labels: {
+        padding: 20,
+        usePointStyle: true
+      }
+    }
+  }
+}; 

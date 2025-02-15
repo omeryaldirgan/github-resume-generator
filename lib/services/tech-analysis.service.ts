@@ -2,30 +2,10 @@ import { Repository, Technology, TechAnalysis, TechCategory } from '@/types/gith
 
 export class TechAnalysisService {
   private readonly TECH_CATEGORIES = {
-    LANGUAGES: {
-      items: ['javascript', 'typescript', 'python', 'java', 'go', 'rust'],
-      category: 'language' as TechCategory
-    },
-    FRONTEND: {
-      items: ['react', 'vue', 'angular', 'next.js', 'nuxt', 'svelte', 'tailwindcss', 'material-ui'],
-      category: 'frontend' as TechCategory
-    },
-    BACKEND: {
-      items: ['node.js', 'express', 'nestjs', 'django', 'spring', 'fastapi', 'graphql'],
-      category: 'backend' as TechCategory
-    },
-    DATABASE: {
-      items: ['mongodb', 'postgresql', 'mysql', 'redis', 'elasticsearch', 'prisma', 'typeorm'],
-      category: 'database' as TechCategory
-    },
-    TESTING: {
-      items: ['jest', 'cypress', 'playwright', 'vitest', 'testing-library', 'mocha'],
-      category: 'testing' as TechCategory
-    },
-    DEVOPS: {
-      items: ['docker', 'kubernetes', 'aws', 'azure', 'github-actions', 'terraform', 'nginx'],
-      category: 'devops' as TechCategory
-    }
+    LANGUAGES: ['javascript', 'typescript', 'python', 'java', 'go', 'rust'],
+    FRAMEWORKS: ['react', 'vue', 'angular', 'next', 'express', 'django'],
+    TOOLS: ['webpack', 'babel', 'docker', 'kubernetes'],
+    DATABASES: ['mongodb', 'postgresql', 'mysql', 'redis']
   };
 
   private readonly EXPERIENCE_THRESHOLDS = {
@@ -106,20 +86,7 @@ export class TechAnalysisService {
 
   private updateTechStats(techMap: Map<string, Technology>, name: string, stats: Partial<Technology>) {
     const existing = techMap.get(name);
-    
-    if (!existing) {
-      techMap.set(name, {
-        name,
-        category: stats.category || 'unknown',
-        commits: stats.commits || 0,
-        repoCount: stats.repoCount || 0,
-        lastUsed: stats.lastUsed || new Date(),
-        firstUsed: stats.firstUsed || new Date(),
-        importCount: stats.importCount || 0,
-        percentage: 0,
-        experience: 'Beginner'
-      });
-    } else {
+    if (existing) {
       techMap.set(name, {
         ...existing,
         commits: (existing.commits || 0) + (stats.commits || 0),
@@ -128,29 +95,42 @@ export class TechAnalysisService {
         lastUsed: stats.lastUsed || existing.lastUsed,
         firstUsed: stats.firstUsed && existing.firstUsed 
           ? new Date(Math.min(stats.firstUsed.getTime(), existing.firstUsed.getTime()))
-          : existing.firstUsed || stats.firstUsed
+          : stats.firstUsed || existing.firstUsed
+      });
+    } else {
+      techMap.set(name, {
+        name,
+        category: stats.category || this.categorizeTechnology(name),
+        commits: stats.commits || 0,
+        repoCount: stats.repoCount || 0,
+        lastUsed: stats.lastUsed || new Date(),
+        firstUsed: stats.firstUsed || new Date(),
+        experience: stats.experience || 'Beginner',
+        percentage: 0,
+        importCount: stats.importCount || 0
       });
     }
   }
 
   private calculateExperience(tech: Technology): string {
-    const yearsOfExperience = (new Date().getTime() - new Date(tech.firstUsed).getTime()) / (1000 * 60 * 60 * 24 * 365);
+    const yearsOfExperience = (new Date().getTime() - tech.firstUsed.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    const repoCount = tech.repoCount || 0;
     
     if (tech.commits >= this.EXPERIENCE_THRESHOLDS.EXPERT.commits &&
         yearsOfExperience >= this.EXPERIENCE_THRESHOLDS.EXPERT.years &&
-        tech.repoCount >= this.EXPERIENCE_THRESHOLDS.EXPERT.repos) {
+        repoCount >= this.EXPERIENCE_THRESHOLDS.EXPERT.repos) {
       return 'Expert';
     }
     
     if (tech.commits >= this.EXPERIENCE_THRESHOLDS.ADVANCED.commits &&
         yearsOfExperience >= this.EXPERIENCE_THRESHOLDS.ADVANCED.years &&
-        tech.repoCount >= this.EXPERIENCE_THRESHOLDS.ADVANCED.repos) {
+        repoCount >= this.EXPERIENCE_THRESHOLDS.ADVANCED.repos) {
       return 'Advanced';
     }
     
     if (tech.commits >= this.EXPERIENCE_THRESHOLDS.INTERMEDIATE.commits &&
         yearsOfExperience >= this.EXPERIENCE_THRESHOLDS.INTERMEDIATE.years &&
-        tech.repoCount >= this.EXPERIENCE_THRESHOLDS.INTERMEDIATE.repos) {
+        repoCount >= this.EXPERIENCE_THRESHOLDS.INTERMEDIATE.repos) {
       return 'Intermediate';
     }
     
@@ -202,28 +182,15 @@ export class TechAnalysisService {
   }
 
   private categorizeTechnology(name: string): TechCategory {
-    const lowerName = name.toLowerCase();
+    name = name.toLowerCase();
     
-    if (this.TECH_CATEGORIES.LANGUAGES.items.includes(lowerName)) {
-      return 'language';
-    }
-    if (this.TECH_CATEGORIES.FRONTEND.items.includes(lowerName)) {
-      return 'frontend';
-    }
-    if (this.TECH_CATEGORIES.BACKEND.items.includes(lowerName)) {
-      return 'backend';
-    }
-    if (this.TECH_CATEGORIES.DATABASE.items.includes(lowerName)) {
-      return 'database';
-    }
-    if (this.TECH_CATEGORIES.TESTING.items.includes(lowerName)) {
-      return 'testing';
-    }
-    if (this.TECH_CATEGORIES.DEVOPS.items.includes(lowerName)) {
-      return 'devops';
-    }
+    if (this.TECH_CATEGORIES.LANGUAGES.includes(name)) return 'language';
+    if (this.TECH_CATEGORIES.FRAMEWORKS.includes(name)) return 'framework';
+    if (this.TECH_CATEGORIES.TOOLS.includes(name)) return 'tool';
+    if (this.TECH_CATEGORIES.DATABASES.includes(name)) return 'database';
     
-    return 'unknown';
+    // Varsayılan olarak framework kabul edelim
+    return 'framework';
   }
 
   private getCommitCount(repo: Repository): number {
@@ -266,7 +233,22 @@ export class TechAnalysisService {
       experience: this.calculateExperience(tech)
     }));
 
+    // Tüm teknolojileri kategorilere göre filtrele
+    const languageDistribution = analyzedTech.filter(tech => tech.category === 'language');
+    const frameworkUsage = analyzedTech.filter(tech => tech.category === 'framework');
+
     return {
+      // Tüm teknolojiler
+      allTechnologies: analyzedTech,
+      // En çok kullanılan teknolojiler
+      topTechnologies: analyzedTech
+        .sort((a, b) => b.commits - a.commits)
+        .slice(0, 10),
+      // Dil dağılımı
+      languageDistribution,
+      // Framework kullanımı
+      frameworkUsage,
+      // Diğer özellikler
       primaryLanguages: this.getPrimaryLanguages(analyzedTech),
       frameworkExpertise: this.getFrameworkExpertise(analyzedTech),
       devopsCapabilities: this.getDevOpsCapabilities(analyzedTech),
@@ -284,14 +266,14 @@ export class TechAnalysisService {
 
   private getFrameworkExpertise(technologies: Technology[]) {
     return technologies
-      .filter(tech => tech.category === 'frontend' || tech.category === 'backend')
+      .filter(tech => tech.category === 'framework')
       .sort((a, b) => b.commits - a.commits)
       .slice(0, 8);
   }
 
   private getDevOpsCapabilities(technologies: Technology[]) {
     return technologies
-      .filter(tech => tech.category === 'devops')
+      .filter(tech => tech.category === 'tool')
       .sort((a, b) => b.commits - a.commits);
   }
 

@@ -5,11 +5,39 @@ import { useTheme } from '@/context/ThemeContext';
 import { Sun, Moon, Github, ArrowLeft, Download } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useEffect, useState } from 'react';
+import { fetchGitHubData } from '@/lib/github-api';
+
+interface Repository {
+  name: string;
+  stargazers_count: number;
+}
 
 export default function Header() {
+  const [repoStats, setRepoStats] = useState({ stars: 0 });
   const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const isResumePage = pathname.includes('/resume/');
+  const isResumePage = pathname?.includes('/resume/') || false;
+
+  useEffect(() => {
+    const fetchRepoStats = async () => {
+      try {
+        const data = await fetchGitHubData('omeryaldirgan');
+        if (data.repositories && data.repositories.length > 0) {
+          const mainRepo = data.repositories.find((repo: Repository) => 
+            repo.name === 'github-resume'
+          );
+          if (mainRepo) {
+            setRepoStats({ stars: mainRepo.stargazers_count });
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching repo stats:', error);
+      }
+    };
+
+    fetchRepoStats();
+  }, []);
 
   return (
     <header className="h-16 border-b border-surface-200/50 dark:border-slate-800/50 
@@ -73,14 +101,14 @@ export default function Header() {
             </button>
 
             <Link 
-              href="https://github.com/yourusername/github-resume" 
+              href="https://github.com/omeryaldirgan/github-resume-generator" 
               target="_blank"
               className="flex items-center space-x-2 text-surface-600 dark:text-slate-400 
                 hover:text-primary-600 dark:hover:text-primary-400 
                 transition-colors duration-200"
             >
               <Github size={20} />
-              <span className="font-medium">29.8K</span>
+              <span className="font-medium">{repoStats.stars}</span>
             </Link>
           </div>
         </div>

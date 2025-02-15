@@ -1,17 +1,22 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
-import { fetchGitHubData } from '@/lib/github-api';
-import { useResume } from '@/context/ResumeContext';
-import { ArrowLeft, Download, Settings, MapPin, Calendar, Mail, Link as LinkIcon, Building2, Twitter } from 'lucide-react';
-import Link from 'next/link';
-import UserProfile from '@/components/UserProfile';
-import UserStats from '@/components/UserStats';
-import TopRepositories from '@/components/TopRepositories';
-import Contributions from '@/components/Contributions';
-import CustomizePanel from '@/components/CustomizePanel';
-import TechnologyInsights from '@/components/TechnologyInsights';
+import Contributions from "@/components/Contributions";
+import CustomizePanel from "@/components/CustomizePanel";
+import TechnologyInsights from "@/components/TechnologyInsights";
+import TopRepositories from "@/components/TopRepositories";
+import UserStats from "@/components/UserStats";
+import { useResume } from "@/context/ResumeContext";
+import { fetchGitHubData } from "@/lib/github-api";
+import {
+  Building2,
+  Calendar,
+  Link as LinkIcon,
+  Mail,
+  MapPin,
+  Twitter,
+} from "lucide-react";
+import { useParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 export default function ResumePage() {
   const params = useParams();
@@ -21,72 +26,86 @@ export default function ResumePage() {
   const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchData = async () => {
       try {
         const data = await fetchGitHubData(username);
-        setUserData(data);
+        if (isMounted) {
+          setUserData(data);
+        }
       } catch (error) {
-        console.error('Error fetching GitHub data:', error);
+        if (isMounted) {
+          console.error("Error fetching GitHub data:", error);
+        }
       }
     };
 
     if (username) {
       fetchData();
     }
+
+    return () => {
+      isMounted = false;
+      setUserData(null);
+    };
   }, [username, setUserData]);
 
   const handleExportPDF = async () => {
     if (!resumeRef.current || isExporting) return;
     setIsExporting(true);
-    
+
     try {
-      const html2pdf = (await import('html2pdf.js')).default;
-      
+      const html2pdf = (await import("html2pdf.js")).default;
+
       // Yazdırma modunu aktif et
-      document.body.classList.add('print-mode');
-      
+      document.body.classList.add("print-mode");
+
       // Tüm elementleri yazdırma moduna hazırla
-      const elements = resumeRef.current.getElementsByClassName('page-break-inside-avoid');
-      Array.from(elements).forEach(el => {
-        (el as HTMLElement).style.marginBottom = '15mm';
+      const elements = resumeRef.current.getElementsByClassName(
+        "page-break-inside-avoid"
+      );
+      Array.from(elements).forEach((el) => {
+        (el as HTMLElement).style.marginBottom = "15mm";
       });
 
       const opt = {
         margin: 15,
         filename: `github-resume-generator-${username}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
           scale: 2,
           useCORS: true,
           letterRendering: true,
           logging: false,
           allowTaint: true,
-          backgroundColor: '#ffffff',
+          backgroundColor: "#ffffff",
         },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait',
+        jsPDF: {
+          unit: "mm",
+          format: "a4",
+          orientation: "portrait",
           compress: true,
         },
-        pagebreak: { mode: 'avoid-all' }
+        pagebreak: { mode: "avoid-all" },
       };
 
       // PDF oluştur
       await html2pdf().from(resumeRef.current).set(opt).save();
-      
     } catch (error) {
-      console.error('PDF export failed:', error);
+      console.error("PDF export failed:", error);
     } finally {
       // Yazdırma modunu kapat
-      document.body.classList.remove('print-mode');
-      
+      document.body.classList.remove("print-mode");
+
       // Margin düzeltmelerini geri al
-      const elements = resumeRef.current?.getElementsByClassName('page-break-inside-avoid');
-      Array.from(elements || []).forEach(el => {
-        (el as HTMLElement).style.marginBottom = '';
+      const elements = resumeRef.current?.getElementsByClassName(
+        "page-break-inside-avoid"
+      );
+      Array.from(elements || []).forEach((el) => {
+        (el as HTMLElement).style.marginBottom = "";
       });
-      
+
       setIsExporting(false);
     }
   };
@@ -94,7 +113,9 @@ export default function ResumePage() {
   if (!userData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-dark">
-        <div className="text-surface-600 dark:text-dark-secondary">Loading...</div>
+        <div className="text-surface-600 dark:text-dark-secondary">
+          Loading...
+        </div>
       </div>
     );
   }
@@ -110,15 +131,17 @@ export default function ResumePage() {
 
           {/* Sağ Taraf - CV İçeriği */}
           <div className="order-1 md:order-2 md:flex-1">
-            <div 
+            <div
               ref={resumeRef}
               className="cv-container"
-              style={{ maxWidth: '210mm' }}
+              style={{ maxWidth: "210mm" }}
             >
               <div className="p-4 sm:p-6 md:p-8 lg:p-[12mm] min-h-screen md:min-h-[297mm]">
                 {/* Profile Section */}
-                <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 pb-6 
-                                border-b border-surface-200 dark:border-dark">
+                <div
+                  className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 pb-6 
+                                border-b border-surface-200 dark:border-dark"
+                >
                   {filters.showAvatar && (
                     <img
                       src={userData.avatar_url}
@@ -131,12 +154,16 @@ export default function ResumePage() {
                     <h2 className="text-3xl font-bold text-surface-900 dark:text-dark">
                       {userData.name || userData.login}
                     </h2>
-                    <p className="text-surface-600 dark:text-dark-secondary">@{userData.login}</p>
-                    
+                    <p className="text-surface-600 dark:text-dark-secondary">
+                      @{userData.login}
+                    </p>
+
                     {filters.showBio && userData.bio && (
-                      <p className="mt-2 text-surface-700 dark:text-dark-secondary">{userData.bio}</p>
+                      <p className="mt-2 text-surface-700 dark:text-dark-secondary">
+                        {userData.bio}
+                      </p>
                     )}
-                    
+
                     <div className="mt-4 grid grid-cols-2 gap-4">
                       <div className="space-y-2">
                         {filters.showLocation && userData.location && (
@@ -145,40 +172,47 @@ export default function ResumePage() {
                             <span>{userData.location}</span>
                           </div>
                         )}
-                        
+
                         {filters.showCompany && userData.company && (
                           <div className="flex items-center text-surface-600 dark:text-dark-secondary">
                             <Building2 size={16} className="mr-2 shrink-0" />
                             <span>{userData.company}</span>
                           </div>
                         )}
-                        
+
                         {filters.showJoinedYear && (
                           <div className="flex items-center text-surface-600 dark:text-dark-secondary">
                             <Calendar size={16} className="mr-2 shrink-0" />
-                            <span>Joined {new Date(userData.created_at).getFullYear()}</span>
+                            <span>
+                              Joined{" "}
+                              {new Date(userData.created_at).getFullYear()}
+                            </span>
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="space-y-2">
                         {userData.social?.email && (
                           <div className="flex items-center text-surface-600 dark:text-dark-secondary">
                             <Mail size={16} className="mr-2 shrink-0" />
-                            <a 
-                              href={`mailto:${userData.social.email}`} 
+                            <a
+                              href={`mailto:${userData.social.email}`}
                               className="hover:text-primary-600 dark:hover:text-primary-500 truncate"
                             >
                               {userData.social.email}
                             </a>
                           </div>
                         )}
-                        
+
                         {userData.social?.blog && (
                           <div className="flex items-center text-surface-600 dark:text-dark-secondary">
                             <LinkIcon size={16} className="mr-2 shrink-0" />
-                            <a 
-                              href={userData.social.blog.startsWith('http') ? userData.social.blog : `https://${userData.social.blog}`}
+                            <a
+                              href={
+                                userData.social.blog.startsWith("http")
+                                  ? userData.social.blog
+                                  : `https://${userData.social.blog}`
+                              }
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-primary-600 dark:hover:text-primary-500 truncate"
@@ -187,17 +221,19 @@ export default function ResumePage() {
                             </a>
                           </div>
                         )}
-                        
+
                         {userData.social?.twitter_username && (
                           <div className="flex items-center text-surface-600 dark:text-dark-secondary">
                             <Twitter size={16} className="mr-2 shrink-0" />
-                            <a 
+                            <a
                               href={userData.social.twitter_username}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-primary-600 dark:hover:text-primary-500 truncate"
                             >
-                              {userData.social.twitter_username.split('/').pop()}
+                              {userData.social.twitter_username
+                                .split("/")
+                                .pop()}
                             </a>
                           </div>
                         )}
@@ -232,4 +268,4 @@ export default function ResumePage() {
       </div>
     </div>
   );
-} 
+}

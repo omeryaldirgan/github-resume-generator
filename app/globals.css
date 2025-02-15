@@ -1,0 +1,219 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Ana font sistemi */
+  :root {
+    --font-xxs: 0.625rem;    /* 10px */
+    --font-xs: 0.75rem;      /* 12px */
+    --font-sm: 0.875rem;     /* 14px */
+    --font-base: 1rem;       /* 16px */
+    --font-lg: 1.125rem;     /* 18px */
+    --font-xl: 1.25rem;      /* 20px */
+    --font-2xl: 1.5rem;      /* 24px */
+    --font-3xl: 1.875rem;    /* 30px */
+    --font-4xl: 2.25rem;     /* 36px */
+  }
+
+  body {
+    @apply bg-surface-50 text-surface-900 antialiased;
+    font-size: var(--font-base);
+    line-height: 1.5;
+  }
+
+  /* Başlık stilleri */
+  h1 {
+    @apply text-3xl font-bold tracking-tight;
+    font-size: var(--font-3xl);
+  }
+
+  h2 {
+    @apply text-2xl font-semibold;
+    font-size: var(--font-2xl);
+  }
+
+  h3 {
+    @apply text-xl font-medium;
+    font-size: var(--font-xl);
+  }
+
+  /* Metin boyutları */
+  .text-caption {
+    font-size: var(--font-xs);
+    line-height: 1.4;
+  }
+
+  .text-body-sm {
+    font-size: var(--font-sm);
+    line-height: 1.5;
+  }
+
+  .text-body {
+    font-size: var(--font-base);
+    line-height: 1.6;
+  }
+
+  /* Özel bileşen stilleri */
+  .resume-title {
+    font-size: var(--font-2xl);
+    @apply font-bold tracking-tight;
+  }
+
+  .resume-section-title {
+    font-size: var(--font-xl);
+    @apply font-semibold mb-4;
+  }
+
+  .resume-subsection-title {
+    font-size: var(--font-lg);
+    @apply font-medium mb-2;
+  }
+
+  .resume-text {
+    font-size: var(--font-sm);
+    @apply leading-relaxed;
+  }
+
+  .resume-meta {
+    font-size: var(--font-xs);
+    @apply text-surface-600 dark:text-dark-secondary;
+  }
+
+  /* Buton ve form elemanları */
+  .btn {
+    font-size: var(--font-sm);
+    @apply font-medium;
+  }
+
+  .input-label {
+    font-size: var(--font-sm);
+    @apply font-medium text-surface-700 dark:text-dark-secondary;
+  }
+
+  .input-text {
+    font-size: var(--font-base);
+    @apply leading-normal;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-6 py-3 rounded-lg font-medium
+           hover:bg-primary-700 transition-colors duration-200
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .input-primary {
+    @apply w-full px-4 py-3 border border-surface-200 rounded-lg bg-white
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           placeholder:text-surface-400;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-card hover:shadow-hover transition-shadow duration-200;
+  }
+}
+
+@layer utilities {
+  .dark-transition {
+    @apply transition-colors duration-200;
+  }
+  
+  .dark-hover {
+    @apply hover:bg-surface-100 dark:hover:bg-surface-800;
+  }
+}
+
+/* Dark mode için input stilleri */
+.dark .input-primary {
+  @apply bg-dark-card border-dark text-dark placeholder:text-dark-secondary;
+}
+
+/* Dark mode için button stilleri */
+.dark .btn-primary {
+  @apply bg-primary-700 hover:bg-primary-800;
+}
+
+/* Dark mode için card stilleri */
+.dark .card {
+  @apply bg-dark-card border-dark;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-surface-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-surface-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-surface-400;
+}
+
+#__next {
+  @apply h-screen overflow-hidden;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .shadow-card {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .cv-container {
+    max-width: none !important;
+    width: 100% !important;
+    padding: 10mm !important;
+    margin: 0 !important;
+    min-height: auto !important;
+  }
+
+  /* Boşlukları azalt */
+  .space-y-8 > * + * {
+    margin-top: 12px !important;
+  }
+
+  .mb-8 {
+    margin-bottom: 12px !important;
+  }
+
+  .gap-4 {
+    gap: 8px !important;
+  }
+
+  .p-6 {
+    padding: 12px !important;
+  }
+
+  /* Sayfa geçişlerini düzelt */
+  .page-break-inside-avoid {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+}
+

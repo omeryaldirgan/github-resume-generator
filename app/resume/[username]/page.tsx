@@ -18,28 +18,32 @@ export default function ResumePage() {
   const resumeRef = useRef<HTMLDivElement>(null);
   const [isExporting, setIsExporting] = useState(false);
 
-  useEffect(() => {    
+  useEffect(() => {
     let isMounted = true;
+
     const fetchData = async () => {
       try {
+        setUserData(null);
+        
         const data = await fetchGitHubData(username);
-        if (isMounted) {
+        
+        if (isMounted && data) {
           setUserData(data);
         }
       } catch (error) {
+        console.error('Error fetching user data:', error);
         if (isMounted) {
-          console.error('Error fetching GitHub data:', error);
+          setUserData(null);
         }
       }
+    };
 
-      if (username) {
-        fetchData();
-      }
+    if (username) {
+      fetchData();
+    }
 
-      return () => {
-        isMounted = false;
-        setUserData(null);
-      };
+    return () => {
+      isMounted = false;
     };
   }, [username, setUserData]);
 
@@ -102,7 +106,12 @@ export default function ResumePage() {
   if (!userData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-dark">
-        <div className="text-surface-600 dark:text-dark-secondary">Loading...</div>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="text-surface-600 dark:text-dark-secondary">
+            Loading {username}'s profile...
+          </div>
+        </div>
       </div>
     );
   }

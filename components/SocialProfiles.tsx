@@ -4,7 +4,6 @@ export default function SocialProfiles({ data }: { data: any }) {
       <h3 className="text-xl font-semibold mb-6 text-surface-900 dark:text-dark">Social Presence</h3>
       
       <div className="grid gap-4">
-        {/* Blog Yazıları */}
         {data.blog_posts?.length > 0 && (
           <div className="space-y-3">
             <h4 className="font-medium">Recent Blog Posts</h4>

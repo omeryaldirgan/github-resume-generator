@@ -4,7 +4,11 @@ const nextConfig = {
     unoptimized: true
   },
   env: {
-    GITHUB_TOKEN: process.env.GITHUB_TOKEN
+    NEXT_PUBLIC_GITHUB_TOKEN: process.env.NEXT_PUBLIC_GITHUB_TOKEN
+  },
+  // GitHub token'ı client-side'da kullanabilmek için
+  publicRuntimeConfig: {
+    NEXT_PUBLIC_GITHUB_TOKEN: process.env.NEXT_PUBLIC_GITHUB_TOKEN
   }
 };
 

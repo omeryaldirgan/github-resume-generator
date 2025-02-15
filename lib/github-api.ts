@@ -22,15 +22,27 @@ type GitHubEvent = {
 };
 
 export async function fetchGitHubData(username: string): Promise<any> {
-  const headers = process.env.GITHUB_TOKEN
-    ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` }
-    : {};
+  const token = process.env.NEXT_PUBLIC_GITHUB_TOKEN;
+  
+  if (!token) {
+    console.error('GitHub token is not configured');
+    throw new Error('GitHub token is required');
+  }
+
+  const headers = {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+  };
 
   try {
+    // Test isteği ile token'ı kontrol et
+    const testResponse = await fetch('https://api.github.com/user', { headers });
+    if (!testResponse.ok) {
+      console.error('GitHub token validation failed:', await testResponse.text());
+    }
+
     // Kullanıcı bilgilerini çek
-    const userResponse = await fetch(`https://api.github.com/users/${username}`, {
-      headers
-    });
+    const userResponse = await fetch(`https://api.github.com/users/${username}`, { headers });
     const userData = await userResponse.json();
 
     if (userResponse.status === 404) {
@@ -49,7 +61,7 @@ export async function fetchGitHubData(username: string): Promise<any> {
 
     // Kullanıcının repolarını çek
     const reposResponse = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=stars&per_page=6`,
+      `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
       { headers }
     );
     const reposData = await reposResponse.json();

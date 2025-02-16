@@ -7,12 +7,14 @@ import { useRouter } from 'next/navigation';
 import resumeImage from '@/assets/illustration-dashboard.webp'
 import { cn } from '@/lib/utils';
 import React from 'react';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function MainContent() {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { theme } = useTheme();
 
   const handleGenerateResume = async () => {
     if (!username || loading) return;
@@ -198,6 +200,23 @@ export default function MainContent() {
                   Visualize your open source contributions with detailed metrics
                 </p>
               </div>
+            </div>
+
+            <div className="block sm:hidden">
+              <a 
+                href="https://www.producthunt.com/posts/github-resume-generator-2"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block hover:opacity-90 transition-opacity"
+              >
+                <img 
+                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=882418&theme=${theme}`}
+                  alt="GitHub Resume Generator"
+                  width="140"
+                  height="30"
+                  style={{ border: 'none' }}
+                />
+              </a>
             </div>
           </div>
 

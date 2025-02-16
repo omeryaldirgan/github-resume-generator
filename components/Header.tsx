@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
 import { fetchGitHubData } from '@/lib/github-api';
 import { useResume } from '@/context/ResumeContext';
+import ProductHuntBadge from './ProductHuntBadge';
 
 interface Repository {
   name: string;
@@ -59,39 +60,26 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            <a 
-              href="https://www.producthunt.com/posts/github-resume-generator-2"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:block hover:opacity-90 transition-opacity"
-            >
-              <img 
-                src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=882418&theme=${theme}`}
-                alt="GitHub Resume Generator"
-                width="150"
-                height="32"
-                style={{ border: 'none' }}
-              />
-            </a>
+            <ProductHuntBadge size="small" className="hidden sm:block" />
 
             {isResumePage && (
               <button 
                 onClick={handleExportPDF}
                 disabled={isExporting}
                 className={cn(
-                  "relative px-6 py-2 text-base font-medium rounded-xl transition-all duration-300 group",
+                  "relative px-4 py-1.5 text-sm font-medium rounded-lg transition-all duration-300 group",
                   "bg-gradient-to-r from-primary-600 to-purple-600",
                   "dark:from-primary-500 dark:to-purple-500",
                   "hover:from-primary-500 hover:to-purple-500",
                   "dark:hover:from-primary-400 dark:hover:to-purple-400",
-                  "text-white shadow-lg hover:shadow-xl",
+                  "text-white shadow-md hover:shadow-lg",
                   "hover:shadow-primary-500/25 dark:hover:shadow-primary-950/50",
-                  "focus:ring-4 focus:ring-primary-500/30 outline-none",
+                  "focus:ring-2 focus:ring-primary-500/30 outline-none",
                   isExporting && "opacity-75 cursor-not-allowed"
                 )}
               >
-                <span className="flex items-center space-x-2">
-                  <Download size={18} />
+                <span className="flex items-center space-x-1.5">
+                  <Download size={16} />
                   <span>{isExporting ? 'Exporting...' : 'Export PDF'}</span>
                 </span>
               </button>

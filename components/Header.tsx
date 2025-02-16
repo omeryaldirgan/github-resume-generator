@@ -59,22 +59,20 @@ export default function Header() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
-            {isHomePage && (
-              <a 
-                href="https://www.producthunt.com/posts/github-resume-generator-2"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:block hover:opacity-90 transition-opacity"
-              >
-                <img 
-                  src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=882418&theme=${theme}`}
-                  alt="GitHub Resume Generator"
-                  width="150"
-                  height="32"
-                  style={{ border: 'none' }}
-                />
-              </a>
-            )}
+            <a 
+              href="https://www.producthunt.com/posts/github-resume-generator-2"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:block hover:opacity-90 transition-opacity"
+            >
+              <img 
+                src={`https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=882418&theme=${theme}`}
+                alt="GitHub Resume Generator"
+                width="150"
+                height="32"
+                style={{ border: 'none' }}
+              />
+            </a>
 
             {isResumePage && (
               <button 

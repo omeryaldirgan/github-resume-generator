@@ -2,12 +2,11 @@
 
 import { useState } from 'react';
 import Image from 'next/image'
-import { Search, ArrowRight, Users, GitFork } from 'lucide-react';
+import {  ArrowRight, Users, GitFork } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import resumeImage from '@/assets/illustration-dashboard.webp'
 import { cn } from '@/lib/utils';
 import React from 'react';
-import { useTheme } from '@/context/ThemeContext';
 import ProductHuntBadge from './ProductHuntBadge';
 
 export default function MainContent() {
@@ -15,7 +14,6 @@ export default function MainContent() {
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { theme } = useTheme();
 
   const handleGenerateResume = async () => {
     if (!username || loading) return;
@@ -23,9 +21,25 @@ export default function MainContent() {
     setError(null);
 
     try {
+      const response = await fetch(`https://api.github.com/users/${username}`, {
+        headers: {
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError('GitHub user not found. Please check the username.');
+          setLoading(false);
+          return;
+        }
+        throw new Error('Failed to fetch user data');
+      }
+
       router.push(`/resume/${username}`);
     } catch (error) {
-      setError('Something went wrong. Please try again.');
+      console.error('Error:', error);
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -80,20 +94,19 @@ export default function MainContent() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleGenerateResume()}
-                  placeholder="Enter GitHub Username"
-                  className="w-full px-6 py-4 text-lg rounded-xl 
-                    border-2 border-surface-200 
-                    dark:border-slate-700/50 dark:bg-slate-900/90
-                    dark:text-slate-200 dark:placeholder:text-slate-500
-                    focus:border-primary-500 dark:focus:border-primary-500 
-                    focus:ring-4 focus:ring-primary-500/20
-                    dark:shadow-inner dark:shadow-slate-950/50
-                    transition-all duration-200 pl-12"
+                  placeholder="Enter GitHub username"
+                  className={cn(
+                    "w-full px-4 py-3 rounded-lg border bg-white dark:bg-dark-card",
+                    "focus:outline-none focus:ring-2 focus:ring-primary-500",
+                    "dark:text-white dark:border-dark dark:focus:ring-primary-400",
+                    error ? "border-red-500 dark:border-red-500" : "border-surface-200"
+                  )}
                 />
-                <Search 
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-surface-400 dark:text-slate-500" 
-                  size={24} 
-                />
+                {error && (
+                  <p className="text-red-500 dark:text-red-400 text-sm mt-2 absolute">
+                    {error}
+                  </p>
+                )}
               </div>
 
               <div className="mt-6 flex items-center justify-between">

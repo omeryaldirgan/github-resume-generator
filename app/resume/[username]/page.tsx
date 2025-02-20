@@ -8,102 +8,58 @@ import UserStats from '@/components/UserStats';
 import { useResume } from '@/context/ResumeContext';
 import { fetchGitHubData } from '@/lib/github-api';
 import { Building2, Calendar, Link as LinkIcon, Mail, MapPin, Twitter } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 export default function ResumePage() {
   const params = useParams();
+  const router = useRouter();
   const username = params?.username as string;
-  const { filters, setFilters, userData, setUserData } = useResume();
+  const { filters, userData, setUserData } = useResume();
   const resumeRef = useRef<HTMLDivElement>(null);
-  const [isExporting, setIsExporting] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
-
     const fetchData = async () => {
       try {
-        setUserData(null);
-        
-        const data = await fetchGitHubData(username);
-        
-        if (isMounted && data) {
-          setUserData(data);
+        const response = await fetch(`https://api.github.com/users/${username}`, {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_GITHUB_TOKEN}`,
+          },
+        });
+
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('User not found');
+            router.push('/404');
+            return;
+          }
+          throw new Error('Failed to fetch user data');
         }
+
+        const userData = await fetchGitHubData(username);
+        if (!userData) {
+          setError('Failed to fetch user data');
+          router.push('/404');
+          return;
+        }
+
+        setUserData(userData);
       } catch (error) {
-        console.error('Error fetching user data:', error);
-        if (isMounted) {
-          setUserData(null);
-        }
+        console.error('Error:', error);
+        setError('An error occurred');
+        router.push('/404');
+      } finally {
+        setLoading(false);
       }
     };
 
-    if (username) {
-      fetchData();
-    }
+    fetchData();
+  }, [username, router]);
 
-    return () => {
-      isMounted = false;
-    };
-  }, [username, setUserData]);
 
-  const handleExportPDF = async () => {
-    if (!resumeRef.current || isExporting) return;
-    setIsExporting(true);
-    
-    try {
-      const html2pdf = (await import('html2pdf.js')).default;
-      
-      // Yazdırma modunu aktif et
-      document.body.classList.add('print-mode');
-      
-      // Tüm elementleri yazdırma moduna hazırla
-      const elements = resumeRef.current.getElementsByClassName('page-break-inside-avoid');
-      Array.from(elements).forEach(el => {
-        (el as HTMLElement).style.marginBottom = '15mm';
-      });
-
-      const opt = {
-        margin: 15,
-        filename: `github-resume-generator-${username}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          logging: false,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-        },
-        jsPDF: { 
-          unit: 'mm', 
-          format: 'a4', 
-          orientation: 'portrait',
-          compress: true,
-        },
-        pagebreak: { mode: 'avoid-all' }
-      };
-
-      // PDF oluştur
-      await html2pdf().from(resumeRef.current).set(opt).save();
-      
-    } catch (error) {
-      console.error('PDF export failed:', error);
-    } finally {
-      // Yazdırma modunu kapat
-      document.body.classList.remove('print-mode');
-      
-      // Margin düzeltmelerini geri al
-      const elements = resumeRef.current?.getElementsByClassName('page-break-inside-avoid');
-      Array.from(elements || []).forEach(el => {
-        (el as HTMLElement).style.marginBottom = '';
-      });
-      
-      setIsExporting(false);
-    }
-  };
-
-  if (!userData) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-surface-50 dark:bg-dark">
         <div className="flex flex-col items-center space-y-4">
@@ -114,6 +70,10 @@ export default function ResumePage() {
         </div>
       </div>
     );
+  }
+
+  if (error) {
+    return null; // 404 sayfasına yönlendirilecek
   }
 
   return (

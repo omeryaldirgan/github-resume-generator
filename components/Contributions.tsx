@@ -87,7 +87,7 @@ export default function Contributions({ data }: { data: any }) {
                 <span>•</span>
                 <span className="flex items-center">
                   <Calendar size={14} className="mr-1" />
-                  {contribution.date}
+                  {new Date(contribution.date).toLocaleDateString()}
                 </span>
               </div>
             </div>

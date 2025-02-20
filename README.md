@@ -45,7 +45,7 @@ yarn install
 
 3. Create `.env.local` and add your GitHub token:
 ```env
-GITHUB_TOKEN=your_github_personal_access_token
+NEXT_PUBLIC_GITHUB_TOKEN=your_github_personal_access_token
 ```
 
 4. Start the development server:

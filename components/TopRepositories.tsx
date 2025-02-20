@@ -18,54 +18,64 @@ export default function TopRepositories({ data }: { data: any }) {
     );
   }
 
+  console.log(data);
+
   return (
     <div className="card section-spacing">
       <h3 className="text-xl font-semibold mb-4 text-surface-900 dark:text-white">
         Top Repositories
       </h3>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {repositories.map((repo: any) => (
-          <div key={repo.id} className="card hover:shadow-lg transition-shadow">
-            <div className="flex flex-col sm:flex-row justify-between gap-2">
+      <div className="repos-grid">
+        {repositories.map((repo: Repository) => (
+          <div key={repo.id} className="repo-card">
+            <div className="flex items-center gap-2">
               <a 
                 href={repo.html_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary-600 dark:text-primary-400 font-medium 
-                         hover:underline flex items-center gap-1 text-sm sm:text-base"
+                className="flex-1 text-primary-600 dark:text-primary-400 hover:underline"
               >
-                {repo.name}
-                <ExternalLink size={14} className="shrink-0" />
+                <span className="repo-title inline-flex items-center text-primary-600 dark:text-primary-400">
+                  {repo.name}
+                </span>
               </a>
-              
-              <div className="flex items-center gap-3 text-surface-600 dark:text-dark-secondary text-sm">
-                <div className="flex items-center gap-1">
-                  <Star size={14} className="shrink-0" />
-                  <span>{repo.stargazers_count}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <GitFork size={14} className="shrink-0" />
-                  <span>{repo.forks_count}</span>
-                </div>
-              </div>
+              <a 
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+              >
+                <ExternalLink size={16} />
+              </a>
             </div>
             
-            {repo.description && (
-              <p className="mt-2 text-sm text-surface-600 dark:text-dark-secondary line-clamp-2">
-                {repo.description}
-              </p>
-            )}
-
-            {repo.language && (
-              <div className="mt-3">
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
-                               bg-primary-50 dark:bg-primary-900/20 
-                               text-primary-700 dark:text-primary-400">
-                  {repo.language}
-                </span>
+            <p className="repo-description">{repo.description || 'No description provided.'}</p>
+            
+            {repo.languages && (
+              <div className="flex flex-wrap gap-2 mt-3 mb-4">
+                {Object.keys(repo.languages).map(lang => (
+                  <span 
+                    key={lang}
+                    className="px-2 py-1 text-xs rounded-full bg-surface-100 dark:bg-slate-800 
+                             text-surface-700 dark:text-slate-300"
+                  >
+                    {lang}
+                  </span>
+                ))}
               </div>
             )}
+            
+            <div className="repo-meta">
+              <div className="flex items-center gap-1">
+                <Star size={14} className="text-yellow-500" />
+                <span>{repo.stargazers_count}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <GitFork size={14} />
+                <span>{repo.forks_count}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>

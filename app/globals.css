@@ -355,3 +355,48 @@
   }
 }
 
+/* Repository kartları için özel stiller */
+.repo-card {
+  @apply flex flex-col h-full overflow-hidden bg-white dark:bg-dark-card rounded-lg border border-surface-200 dark:border-dark p-4;
+}
+
+.repo-title {
+  @apply font-medium;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.repo-description {
+  @apply text-sm text-surface-600 dark:text-slate-400 flex-grow;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+}
+
+.repo-meta {
+  @apply mt-4 flex items-center gap-4 text-sm text-surface-500 dark:text-slate-400 border-t border-surface-100 dark:border-dark pt-4;
+}
+
+/* Grid düzeni için özel stiller */
+.repos-grid {
+  @apply grid gap-4;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Responsive ayarlar */
+@media (max-width: 640px) {
+  .repos-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .repo-card {
+    height: auto;
+  }
+}
+

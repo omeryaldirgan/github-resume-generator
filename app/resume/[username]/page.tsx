@@ -10,15 +10,18 @@ import { fetchGitHubData } from '@/lib/github-api';
 import { Building2, Calendar, Link as LinkIcon, Mail, MapPin, Twitter } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import CustomizeDrawer from '@/components/CustomizeDrawer';
+import { cn } from '@/lib/utils';
 
 export default function ResumePage() {
   const params = useParams();
   const router = useRouter();
   const username = params?.username as string;
-  const { filters, userData, setUserData } = useResume();
+  const { filters, userData, setUserData, setFilters } = useResume();
   const resumeRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,12 +79,41 @@ export default function ResumePage() {
     return null; // 404 sayfasına yönlendirilecek
   }
 
+  const customizeContent = (
+    <div className="space-y-8">
+      {/* Introduction Settings */}
+      <div>
+        <h3 className="resume-subsection-title text-surface-800 dark:text-dark mb-4">Customize Introduction</h3>
+        <div className="space-y-3">
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={filters.showBio}
+              onChange={(e) => setFilters({ ...filters, showBio: e.target.checked })}
+              className="w-4 h-4 rounded border-surface-300 dark:border-dark text-primary-600 focus:ring-primary-500 dark:bg-dark-card dark:checked:bg-primary-600 dark:checked:border-primary-600"
+            />
+            <span className="resume-text text-surface-700 dark:text-dark-secondary">Show Bio</span>
+          </label>
+          {/* Diğer filtreler */}
+        </div>
+      </div>
+
+      {/* Stats Settings */}
+      <div>
+        <h3 className="resume-subsection-title text-surface-800 dark:text-dark mb-4">Stats & Repositories</h3>
+        <div className="space-y-3">
+          {/* Stats filtreleri */}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen bg-surface-50 dark:bg-dark">
+    <div className="layout-container">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
-          {/* Sol Taraf - Filtreler */}
-          <div className="order-2 md:order-1 md:w-80 no-print">
+          {/* Sol Taraf - Desktop için Panel */}
+          <div className="order-2 md:order-1 md:w-80 no-print hidden lg:block">
             <CustomizePanel />
           </div>
 
@@ -206,6 +238,34 @@ export default function ResumePage() {
             </div>
           </div>
         </div>
+
+        {/* Customize butonu - mobil/tablet için */}
+        <button
+          onClick={() => setIsDrawerOpen(true)}
+          className={cn(
+            "fixed bottom-4 right-4 z-30 lg:hidden",
+            "inline-flex items-center space-x-2",
+            "px-6 py-2.5 text-base font-medium rounded-xl transition-all duration-300",
+            "bg-gradient-to-r from-primary-600 to-purple-600",
+            "dark:from-primary-500 dark:to-purple-500",
+            "hover:from-primary-500 hover:to-purple-500",
+            "dark:hover:from-primary-400 dark:hover:to-purple-400",
+            "text-white shadow-lg hover:shadow-xl",
+            "hover:shadow-primary-500/25 dark:hover:shadow-primary-950/50",
+            "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none",
+            "focus:ring-4 focus:ring-primary-500/30 outline-none"
+          )}
+        >
+          <span>Customize</span>
+        </button>
+
+        {/* Mobil/tablet için drawer */}
+        <CustomizeDrawer 
+          isOpen={isDrawerOpen} 
+          onClose={() => setIsDrawerOpen(false)}
+        >
+          <CustomizePanel />
+        </CustomizeDrawer>
       </div>
     </div>
   );

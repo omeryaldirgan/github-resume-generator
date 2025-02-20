@@ -18,7 +18,6 @@ export default function TopRepositories({ data }: { data: any }) {
     );
   }
 
-  console.log(data);
 
   return (
     <div className="card section-spacing">

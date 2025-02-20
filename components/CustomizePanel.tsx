@@ -5,9 +5,7 @@ export default function CustomizePanel() {
   const { filters, setFilters } = useResume();
 
   return (
-    <div className="w-80 bg-white dark:bg-dark-card rounded-xl p-6 shadow-card h-fit sticky top-24">
-      
-      
+    <div className="bg-white dark:bg-dark-card rounded-xl p-6 shadow-card h-fit lg:sticky lg:top-24">
       <div className="space-y-8">
         {/* Introduction Settings */}
         <div>

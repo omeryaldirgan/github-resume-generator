@@ -109,7 +109,7 @@ export default function ResumePage() {
   );
 
   return (
-    <div className="layout-container">
+    <div className="min-h-screen bg-surface-50 dark:bg-dark">
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Sol Taraf - Desktop için Panel */}
@@ -121,7 +121,7 @@ export default function ResumePage() {
           <div className="order-1 md:order-2 md:flex-1">
             <div 
               ref={resumeRef}
-              className="cv-container"
+              className="cv-container bg-white dark:bg-dark-card rounded-xl shadow-card"
               style={{ maxWidth: '210mm' }}
             >
               <div className="p-4 sm:p-6 md:p-8 lg:p-[12mm] min-h-screen md:min-h-[297mm]">

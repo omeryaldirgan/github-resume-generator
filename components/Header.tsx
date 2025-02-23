@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useTheme } from '@/context/ThemeContext';
-import { Sun, Moon, Github,Download } from 'lucide-react';
+import { Sun, Moon, Github, Download, Heart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useEffect, useState } from 'react';
@@ -61,6 +61,19 @@ export default function Header() {
 
           <div className="flex items-center gap-2 sm:gap-4">
             <ProductHuntBadge size="small" className="hidden sm:block" />
+
+            <Link
+              href="https://github.com/sponsors/omeryaldirgan"
+              target="_blank"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium
+                text-surface-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400
+                border border-surface-200 dark:border-slate-700 rounded-lg
+                hover:border-primary-500 dark:hover:border-primary-500
+                transition-colors duration-200"
+            >
+              <Heart size={14} className="text-pink-500" />
+              <span className="hidden xs:block">Sponsor</span>
+            </Link>
 
             {isResumePage && (
               <button 

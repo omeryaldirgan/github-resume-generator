@@ -36,7 +36,7 @@ export default function TopRepositories({ data }: { data: any }) {
                 className="flex-1 text-primary-600 dark:text-primary-400 hover:underline"
               >
                 <span className="repo-title inline-flex items-center text-primary-600 dark:text-primary-400">
-                  {repo.name}
+                {repo.name.length > 18 ? `${repo.name.substring(0, 15)}...` : repo.name}
                 </span>
               </a>
               <a 
